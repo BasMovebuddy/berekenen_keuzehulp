@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Netto bijtelling per maand</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --brand: #5F62CC;
+    --brand2: #5F62CC;
+    --brand-light: #f0f0fb;
+    --text: #1a1a2e;
+    --muted: #6b7280;
+    --border: #e2e4ea;
+    --bg: #f7f8fc;
+    --white: #ffffff;
+    --radius: 10px;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 16px;
+  }
+
+  .card {
+    background: var(--white);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    width: 100%;
+    max-width: 560px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+  }
+
+  .card-header {
+    padding: 28px 32px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .card-header h1 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--brand);
+    margin-bottom: 10px;
+  }
+
+  .card-header p {
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  .card-body {
+    padding: 28px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 0 -32px;
+  }
+
+  /* Field label */
+  .field-label {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .required { color: var(--brand); }
+
+  /* Radio group */
+  .radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .radio-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    cursor: pointer;
+    padding: 12px 14px;
+    border-radius: var(--radius);
+    border: 1.5px solid var(--border);
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .radio-option:hover { border-color: var(--brand); background: var(--brand-light); }
+  .radio-option.selected { border-color: var(--brand); background: var(--brand-light); }
+
+  .radio-option input[type="radio"] {
+    appearance: none;
+    width: 18px; height: 18px;
+    border: 2px solid #c0c4d6;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 1px;
+    cursor: pointer;
+    transition: border-color 0.15s;
+    position: relative;
+  }
+
+  .radio-option input[type="radio"]:checked {
+    border-color: var(--brand);
+    background: var(--brand);
+    box-shadow: inset 0 0 0 3px white;
+  }
+
+  .radio-option .radio-text {
+    font-size: 13.5px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  /* Select */
+  .select-wrapper {
+    position: relative;
+  }
+
+  .select-wrapper select {
+    width: 100%;
+    padding: 11px 40px 11px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--white);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    appearance: none;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .select-wrapper select:focus { border-color: var(--brand); }
+
+  .select-wrapper::after {
+    content: '';
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0; height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 6px solid var(--muted);
+    pointer-events: none;
+  }
+
+  /* Number input */
+  .input-wrapper {
+    position: relative;
+  }
+
+  .input-wrapper input {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid var(--brand2);
+    border-radius: var(--radius);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    background: var(--white);
+  }
+
+  .input-wrapper input:focus {
+    box-shadow: 0 0 0 3px rgba(95,98,204,0.15);
+  }
+
+  .input-wrapper input::placeholder { color: #b0b5c8; }
+
+  /* Result */
+  .result-section {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-top: 4px;
+    min-height: 40px;
+  }
+
+  .result-label-text {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  .result-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--brand2);
+    letter-spacing: -0.5px;
+    transition: all 0.25s ease;
+    min-width: 120px;
+    text-align: right;
+  }
+
+  .result-value.updated {
+    animation: pop 0.3s cubic-bezier(0.16,1,0.3,1);
+  }
+
+  @keyframes pop {
+    0% { transform: scale(0.95); opacity: 0.6; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .euro-sign {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .result-sublabel {
+    font-size: 11.5px;
+    color: var(--muted);
+    text-align: right;
+    margin-top: 6px;
+    padding-bottom: 4px;
+  }
+
+  /* Info note */
+  .info-note {
+    background: #f0f3ff;
+    border-left: 3px solid var(--brand);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  /* Toggle keuze */
+  .keuze-tabs {
+    display: flex;
+    background: var(--bg);
+    border-radius: 10px;
+    padding: 4px;
+    gap: 4px;
+  }
+
+  .keuze-tab {
+    flex: 1;
+    padding: 9px 12px;
+    border-radius: 7px;
+    border: none;
+    background: transparent;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.18s ease;
+    text-align: center;
+  }
+
+  .keuze-tab.active {
+    background: var(--white);
+    color: var(--brand2);
+    font-weight: 600;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+  }
+
+  /* Ja/Nee radio simplified */
+  .ja-nee-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .hidden { display: none; }
+
+  .field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    animation: fadeIn 0.2s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="card-header">
+    <h1>Netto bijtelling per maand</h1>
+    <p>"Bijtelling" zijn de fiscale kosten van het privégebruik van een auto van de zaak. De fiscale bijtelling wordt berekend op basis van een percentage van de fiscale waarde (consumentenprijs + opties) van de auto. Als leaserijder betaal je bijtelling wanneer je meer dan 500 kilometer privé per jaar rijdt. Woon-werkverkeer wordt gezien als zakelijke kilometers.</p>
+  </div>
+
+  <div class="card-body">
+
+    <div class="field-group">
+
+      <!-- Levering auto -->
+      <div>
+        <div class="field-label">Levering auto <span class="required">*</span></div>
+        <div class="select-wrapper">
+          <select id="leveringsjaar" onchange="calculate()">
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+            <option value="2026" selected>2026</option>
+            <option value="2027">2027</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Bijtellingspercentage -->
+      <div>
+        <div class="field-label">Bijtellingspercentage <span class="required">*</span></div>
+        <div class="select-wrapper">
+          <select id="bijtelling" onchange="calculate()">
+            <option value="0.16">16% (volledig elektrisch)</option>
+            <option value="0.22" selected>22%</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Belastingschaal -->
+      <div>
+        <div class="field-label">Belastingschaal <span class="required">*</span></div>
+        <div class="select-wrapper">
+          <select id="belasting" onchange="calculate()">
+            <option value="0.3697">36,97% (bruto inkomen t/m €38.441)</option>
+            <option value="0.3748" selected>37,48% (bruto inkomen tussen de €38.441 en €76.817)</option>
+            <option value="0.495">49,50% (bruto inkomen boven €76.817)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Modus toggle -->
+      <div>
+        <div class="field-label">Aan welke waarde wil jij een maximum geven? <span class="required">*</span></div>
+        <div class="keuze-tabs">
+          <button class="keuze-tab active" id="tab-netto" onclick="setModus('netto')">Netto bijtelling</button>
+          <button class="keuze-tab" id="tab-fiscaal" onclick="setModus('fiscaal')">Fiscale waarde</button>
+        </div>
+      </div>
+
+      <!-- Input netto bijtelling -->
+      <div id="field-netto">
+        <div class="field-label">Vul je maximale netto bijtelling in:</div>
+        <div class="input-wrapper">
+          <input type="number" id="input-netto" placeholder="bijv. 330" min="0" step="1" oninput="calculate()" value="330">
+        </div>
+      </div>
+
+      <!-- Input fiscale waarde -->
+      <div id="field-fiscaal" class="hidden">
+        <div class="field-label">Vul de fiscale waarde van de auto in:</div>
+        <div class="input-wrapper">
+          <input type="number" id="input-fiscaal" placeholder="bijv. 40000" min="0" step="100" oninput="calculate()">
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Resultaat -->
+      <div>
+        <div class="result-section">
+          <span class="euro-sign">€</span>
+          <span class="result-value" id="result">48.025,61</span>
+        </div>
+        <div class="result-sublabel" id="result-label">Max. fiscale waarde</div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<script>
+  let modus = 'netto';  function setModus(m) {
+    modus = m;
+    document.getElementById('tab-netto').classList.toggle('active', m === 'netto');
+    document.getElementById('tab-fiscaal').classList.toggle('active', m === 'fiscaal');
+    document.getElementById('field-netto').classList.toggle('hidden', m !== 'netto');
+    document.getElementById('field-fiscaal').classList.toggle('hidden', m !== 'fiscaal');
+    document.getElementById('result-label').textContent = m === 'netto' ? 'Max. fiscale waarde' : 'Netto bijtelling per maand';
+    calculate();
+  }
+
+  function formatNL(val, decimals = 2) {
+    return val.toLocaleString('nl-NL', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+  }
+
+  function calculate() {
+    const bijtellingPct = parseFloat(document.getElementById('bijtelling').value);
+    const belastingPct = parseFloat(document.getElementById('belasting').value);
+    const resultEl = document.getElementById('result');
+
+    let resultVal = null;
+
+    if (modus === 'netto') {
+      const netto = parseFloat(document.getElementById('input-netto').value);
+      if (!isNaN(netto) && netto > 0) {
+        resultVal = (netto * 12) / (bijtellingPct * belastingPct);
+      }
+    } else {
+      const fiscaal = parseFloat(document.getElementById('input-fiscaal').value);
+      if (!isNaN(fiscaal) && fiscaal > 0) {
+        resultVal = (fiscaal * bijtellingPct * belastingPct) / 12;
+      }
+    }
+
+    if (resultVal !== null) {
+      resultEl.textContent = formatNL(resultVal);
+    } else {
+      resultEl.textContent = '—';
+    }
+
+    resultEl.classList.remove('updated');
+    void resultEl.offsetWidth;
+    resultEl.classList.add('updated');
+  }
+
+  calculate();
+</script>
+</body>
+</html>
