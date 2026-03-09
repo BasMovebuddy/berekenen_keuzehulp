@@ -3,185 +3,246 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bijtelling / Fiscale waarde berekentool</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>MoveBuddy Lease Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Ubuntu:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --brand: #5F62CC;
-    --brand-light: #f0f0fb;
-    --text: #1a1a2e;
-    --muted: #6b7280;
-    --border: #e2e4ea;
-    --bg: #f4f4f9;
-    --white: #ffffff;
+    --teal:        #4BBCBA;
+    --teal-dark:   #2E9E9C;
+    --teal-light:  #E8F8F7;
+    --purple:      #7B6FC4;
+    --purple-dark: #5A50A8;
+    --purple-light:#EEEAFB;
+    --text:        #1C3145;
+    --subtext:     #6B7280;
+    --border:      #DDE8E8;
+    --white:       #FFFFFF;
+    --bg:          #F4FAFA;
   }
 
   body {
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: 'Ubuntu', sans-serif;
     background: var(--bg);
-    color: var(--text);
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 32px 16px;
-  }
-
-  .calculator {
-    background: var(--white);
-    border-radius: 20px;
-    border: 1px solid var(--border);
-    width: 100%;
-    max-width: 500px;
-    box-shadow: 0 8px 32px rgba(95,98,204,0.08);
+    position: relative;
     overflow: hidden;
   }
 
-  .calc-header {
-    padding: 22px 28px 18px;
-    border-bottom: 1px solid var(--border);
+  body::before {
+    content: '';
+    position: fixed;
+    top: -120px; left: -120px;
+    width: 420px; height: 420px;
+    background: radial-gradient(circle, rgba(75,188,186,0.18) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -100px; right: -80px;
+    width: 360px; height: 360px;
+    background: radial-gradient(circle, rgba(123,111,196,0.12) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  .card {
+    background: var(--white);
+    border-radius: 24px;
+    width: 100%;
+    max-width: 520px;
+    box-shadow: 0 2px 4px rgba(75,188,186,0.08), 0 12px 40px rgba(28,49,69,0.10);
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+  }
+
+  .card-header {
+    background: linear-gradient(135deg, #4BBCBA 0%, #2E9E9C 100%);
+    padding: 22px 28px 20px;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
+    position: relative;
+    overflow: hidden;
   }
 
-  .calc-icon {
-    width: 34px; height: 34px;
-    background: var(--brand-light);
-    border-radius: 9px;
+  .card-header::after {
+    content: '';
+    position: absolute;
+    bottom: -30px; right: -30px;
+    width: 120px; height: 120px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  .header-icon {
+    width: 40px; height: 40px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 12px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
+    font-size: 20px;
     flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   }
 
-  .calc-header h1 {
-    font-size: 14.5px;
+  .header-text h1 {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 17px;
     font-weight: 700;
-    color: var(--brand);
+    color: #fff;
     letter-spacing: -0.2px;
+    line-height: 1.2;
   }
 
-  .calc-body {
-    padding: 22px 28px;
+  .header-text p {
+    font-size: 12px;
+    color: rgba(255,255,255,0.75);
+    margin-top: 2px;
+    font-weight: 300;
+  }
+
+  .card-body {
+    padding: 24px 28px 28px;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 20px;
+  }
+
+  .section-label {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--teal-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 10px;
   }
 
   .fields-row {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    gap: 10px;
+    gap: 12px;
   }
 
   .field { display: flex; flex-direction: column; gap: 5px; }
 
   .field-label {
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--subtext);
+    display: flex;
+    align-items: center;
+    gap: 4px;
   }
 
   .select-wrapper { position: relative; }
 
   .select-wrapper select {
     width: 100%;
-    padding: 8px 24px 8px 10px;
+    padding: 9px 26px 9px 11px;
     border: 1.5px solid var(--border);
-    border-radius: 8px;
-    background: var(--bg);
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    border-radius: 10px;
+    background: var(--white);
+    font-family: 'Ubuntu', sans-serif;
     font-size: 13px;
     font-weight: 500;
     color: var(--text);
     appearance: none;
     cursor: pointer;
     outline: none;
-    transition: border-color 0.15s, background 0.15s;
+    transition: border-color 0.15s, box-shadow 0.15s;
   }
 
-  .select-wrapper select:focus { border-color: var(--brand); background: var(--white); }
+  .select-wrapper select:focus {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(75,188,186,0.15);
+  }
 
   .select-wrapper::after {
     content: '';
     position: absolute;
-    right: 9px; top: 50%;
+    right: 10px; top: 50%;
     transform: translateY(-50%);
     width: 0; height: 0;
     border-left: 4px solid transparent;
     border-right: 4px solid transparent;
-    border-top: 5px solid var(--muted);
+    border-top: 5px solid var(--subtext);
     pointer-events: none;
   }
 
   .mode-toggle {
     display: flex;
-    background: var(--bg);
-    border-radius: 10px;
-    padding: 3px;
-    gap: 3px;
+    background: var(--purple-light);
+    border-radius: 12px;
+    padding: 4px;
+    gap: 4px;
   }
 
   .mode-btn {
     flex: 1;
-    padding: 8px 10px;
-    border-radius: 8px;
+    padding: 9px 10px;
+    border-radius: 9px;
     border: none;
     background: transparent;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--muted);
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--purple);
     cursor: pointer;
     transition: all 0.18s ease;
     text-align: center;
-    line-height: 1.35;
   }
 
   .mode-btn.active {
-    background: var(--white);
-    color: var(--brand);
-    font-weight: 700;
-    box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+    background: var(--purple);
+    color: #fff;
+    box-shadow: 0 2px 10px rgba(123,111,196,0.35);
   }
 
-  .input-area { display: flex; flex-direction: column; gap: 5px; }
+  .mode-btn:not(.active):hover { background: rgba(123,111,196,0.12); }
+
+  .input-area { display: flex; flex-direction: column; gap: 6px; }
 
   .input-field-label {
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--subtext);
   }
 
   .input-with-prefix {
     display: flex;
     align-items: stretch;
-    border: 1.5px solid var(--brand);
-    border-radius: 8px;
+    border: 1.5px solid var(--teal);
+    border-radius: 12px;
     overflow: hidden;
     background: var(--white);
     transition: box-shadow 0.15s;
   }
 
   .input-with-prefix:focus-within {
-    box-shadow: 0 0 0 3px rgba(95,98,204,0.14);
+    box-shadow: 0 0 0 3px rgba(75,188,186,0.18);
   }
 
   .input-prefix {
-    padding: 0 13px;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--brand);
-    background: var(--brand-light);
+    padding: 0 14px;
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--teal-dark);
+    background: var(--teal-light);
     display: flex;
     align-items: center;
-    border-right: 1.5px solid rgba(95,98,204,0.2);
+    border-right: 1.5px solid rgba(75,188,186,0.25);
     flex-shrink: 0;
   }
 
@@ -189,86 +250,99 @@
     flex: 1;
     padding: 11px 14px;
     border: none;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 16px;
-    font-weight: 600;
+    font-family: 'Ubuntu', sans-serif;
+    font-size: 17px;
+    font-weight: 500;
     color: var(--text);
     outline: none;
     background: transparent;
     min-width: 0;
   }
 
-  .input-with-prefix input::placeholder { color: #c0c4d6; font-weight: 400; font-size: 14px; }
+  .input-with-prefix input::placeholder { color: #c0cdd0; font-weight: 300; font-size: 15px; }
+
+  .divider { height: 1px; background: var(--border); }
 
   .result-card {
-    background: var(--brand-light);
-    border: 1.5px solid rgba(95,98,204,0.18);
-    border-radius: 12px;
-    padding: 16px 20px;
+    background: linear-gradient(135deg, #4BBCBA 0%, #3AABAA 100%);
+    border-radius: 16px;
+    padding: 18px 22px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 2px;
+    box-shadow: 0 4px 20px rgba(75,188,186,0.3);
+    position: relative;
+    overflow: hidden;
   }
 
-  .result-left { display: flex; flex-direction: column; gap: 4px; }
+  .result-card::before {
+    content: '';
+    position: absolute;
+    top: -20px; right: -20px;
+    width: 100px; height: 100px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  .result-left { display: flex; flex-direction: column; gap: 3px; }
 
   .result-tag {
-    font-size: 10.5px;
-    font-weight: 700;
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.8px;
-    color: var(--brand);
-    opacity: 0.6;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.7);
   }
 
   .result-sublabel {
-    font-size: 12.5px;
-    color: var(--brand);
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 13px;
     font-weight: 600;
-    opacity: 0.85;
+    color: #fff;
+    margin-top: 2px;
   }
 
   .result-amount { display: flex; align-items: baseline; gap: 4px; }
 
   .result-euro {
-    font-size: 16px;
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 17px;
     font-weight: 600;
-    color: var(--brand);
-    opacity: 0.6;
+    color: rgba(255,255,255,0.7);
   }
 
   .result-value {
-    font-size: 32px;
-    font-weight: 700;
-    color: var(--brand);
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 34px;
+    font-weight: 800;
+    color: #fff;
     letter-spacing: -1.5px;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.1);
     transition: all 0.2s ease;
   }
 
-  .result-value.updated {
-    animation: pop 0.28s cubic-bezier(0.16,1,0.3,1);
-  }
+  .result-value.updated { animation: pop 0.3s cubic-bezier(0.16,1,0.3,1); }
 
   @keyframes pop {
-    0% { transform: scale(0.93); opacity: 0.4; }
+    0% { transform: scale(0.92); opacity: 0.5; }
     100% { transform: scale(1); opacity: 1; }
   }
-
-  .field-with-tooltip { position: relative; }
 
   .tooltip-trigger {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 15px; height: 15px;
+    width: 14px; height: 14px;
     border-radius: 50%;
-    background: var(--border);
-    color: var(--muted);
-    font-size: 10px;
+    background: var(--purple-light);
+    border: 1px solid var(--purple);
+    color: var(--purple);
+    font-size: 9px;
     font-weight: 700;
     cursor: default;
-    margin-left: 5px;
+    margin-left: 4px;
     flex-shrink: 0;
     position: relative;
   }
@@ -276,28 +350,27 @@
   .tooltip-box {
     display: none;
     position: absolute;
-    bottom: calc(100% + 6px);
-    right: 0;
-    left: auto;
-    background: #1a1a2e;
-    color: #fff;
-    border-radius: 8px;
-    padding: 8px 12px;
+    bottom: calc(100% + 7px);
+    right: 0; left: auto;
+    background: var(--text);
+    color: #e8f0f0;
+    border-radius: 10px;
+    padding: 9px 13px;
+    font-family: 'Ubuntu', sans-serif;
     font-size: 11.5px;
-    line-height: 1.7;
+    line-height: 1.75;
     white-space: nowrap;
     z-index: 100;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+    box-shadow: 0 6px 20px rgba(28,49,69,0.25);
     pointer-events: none;
   }
 
   .tooltip-box::after {
     content: '';
     position: absolute;
-    top: 100%; right: 4px;
-    left: auto;
+    top: 100%; right: 5px;
     border: 5px solid transparent;
-    border-top-color: #1a1a2e;
+    border-top-color: var(--text);
   }
 
   .tooltip-trigger:hover .tooltip-box,
@@ -306,65 +379,100 @@
   .hidden { display: none; }
 
   @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(4px); }
-    to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: translateY(5px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
-  .fade-in { animation: fadeIn 0.18s ease; }
+  .fade-in { animation: fadeIn 0.2s ease; }
+
+  .card-footer {
+    padding: 12px 28px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-top: 1px solid var(--border);
+  }
+
+  .footer-logo {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--teal-dark);
+  }
+
+  .footer-dot { color: var(--purple); font-weight: 800; }
+
+  .footer-sub {
+    font-size: 11px;
+    color: var(--subtext);
+    font-weight: 300;
+  }
 </style>
 </head>
 <body>
 
-<div class="calculator">
-  <div class="calc-header">
-    <div class="calc-icon">🚗</div>
-    <h1>Lease calculator</h1>
+<div class="card">
+
+  <div class="card-header">
+    <div class="header-icon">🚗</div>
+    <div class="header-text">
+      <h1>MoveBuddy Lease Calculator</h1>
+      <p>Bereken je fiscale waarde of netto bijtelling</p>
+    </div>
   </div>
 
-  <div class="calc-body">
+  <div class="card-body">
 
-    <div class="fields-row">
-      <div class="field">
-        <div class="field-label">Levering</div>
-        <div class="select-wrapper">
-          <select id="leveringsjaar" onchange="calculate()">
-            <option value="2026" selected>2026</option>
-          </select>
-        </div>
-      </div>
+    <div>
+      <div class="section-label">Instellingen</div>
+      <div class="fields-row">
 
-      <div class="field">
-        <div class="field-label">Bijtelling</div>
-        <div class="select-wrapper">
-          <select id="bijtelling" onchange="calculate()">
-            <option value="0.22" selected>22%</option>
-            <option value="0.18">18% – elektrisch</option>
-          </select>
+        <div class="field">
+          <div class="field-label">Levering</div>
+          <div class="select-wrapper">
+            <select id="leveringsjaar" onchange="calculate()">
+              <option value="2026" selected>2026</option>
+            </select>
+          </div>
         </div>
-      </div>
 
-      <div class="field">
-        <div class="field-label" style="display:flex;align-items:center;">
-          Belastingschaal
-          <span class="tooltip-trigger" tabindex="0">?
-            <div class="tooltip-box">
-              35,75% — t/m €38.441<br>
-              37,48% — €38.441 t/m €76.817<br>
-              49,50% — boven €76.817
-            </div>
-          </span>
+        <div class="field">
+          <div class="field-label">Bijtelling</div>
+          <div class="select-wrapper">
+            <select id="bijtelling" onchange="calculate()">
+              <option value="0.22" selected>22%</option>
+              <option value="0.18">18% – elektrisch</option>
+            </select>
+          </div>
         </div>
-        <div class="select-wrapper">
-          <select id="belasting" onchange="calculate()">
-            <option value="0.3575" selected>35,75%</option>
-            <option value="0.3748">37,48%</option>
-            <option value="0.495">49,50%</option>
-          </select>
+
+        <div class="field">
+          <div class="field-label">
+            Belastingschaal
+            <span class="tooltip-trigger" tabindex="0">?
+              <div class="tooltip-box">
+                35,75% — t/m €38.441<br>
+                37,48% — €38.441 t/m €76.817<br>
+                49,50% — boven €76.817
+              </div>
+            </span>
+          </div>
+          <div class="select-wrapper">
+            <select id="belasting" onchange="calculate()">
+              <option value="0.3575" selected>35,75%</option>
+              <option value="0.3748">37,48%</option>
+              <option value="0.495">49,50%</option>
+            </select>
+          </div>
         </div>
+
       </div>
     </div>
 
+    <div class="divider"></div>
+
     <div>
-      <div class="field-label" style="margin-bottom: 6px;">Wat wil je berekenen?</div>
+      <div class="section-label">Wat wil je berekenen?</div>
       <div class="mode-toggle">
         <button class="mode-btn active" id="tab-netto" onclick="setModus('netto')">Fiscale waarde</button>
         <button class="mode-btn" id="tab-fiscaal" onclick="setModus('fiscaal')">Netto bijtelling</button>
@@ -375,7 +483,7 @@
       <div class="input-field-label">Max. netto bijtelling per maand</div>
       <div class="input-with-prefix">
         <span class="input-prefix">€</span>
-        <input type="number" id="input-netto" placeholder="330" min="0" step="1" oninput="calculate()" value="">
+        <input type="number" id="input-netto" placeholder="330" min="0" step="1" oninput="calculate()">
       </div>
     </div>
 
@@ -399,6 +507,12 @@
     </div>
 
   </div>
+
+  <div class="card-footer">
+    <span class="footer-logo">·movebuddy</span>
+    <span class="footer-sub">moving employees everywhere</span>
+  </div>
+
 </div>
 
 <script>
@@ -420,19 +534,39 @@
 
   function calculate() {
     const bijtellingPct = parseFloat(document.getElementById('bijtelling').value);
-    const belastingPct = parseFloat(document.getElementById('belasting').value);
-    const resultEl = document.getElementById('result');
-    let resultVal = null;
+    const belastingPct  = parseFloat(document.getElementById('belasting').value);
+    const isElektrisch  = bijtellingPct === 0.18;
+    const drempel       = 30000;
+    const laagPct       = 0.18;
+    const hoogPct       = 0.22;
+    const resultEl      = document.getElementById('result');
+    let resultVal       = null;
 
     if (modus === 'netto') {
       const netto = parseFloat(document.getElementById('input-netto').value);
       if (!isNaN(netto) && netto > 0) {
-        resultVal = (netto * 12) / (bijtellingPct * belastingPct);
+        if (!isElektrisch) {
+          resultVal = (netto * 12) / (bijtellingPct * belastingPct);
+        } else {
+          const nettoOpDrempel = (drempel * laagPct * belastingPct) / 12;
+          if (netto <= nettoOpDrempel) {
+            resultVal = (netto * 12) / (laagPct * belastingPct);
+          } else {
+            const nettoRest = netto - nettoOpDrempel;
+            resultVal = drempel + (nettoRest * 12) / (hoogPct * belastingPct);
+          }
+        }
       }
     } else {
       const fiscaal = parseFloat(document.getElementById('input-fiscaal').value);
       if (!isNaN(fiscaal) && fiscaal > 0) {
-        resultVal = (fiscaal * bijtellingPct * belastingPct) / 12;
+        if (!isElektrisch) {
+          resultVal = (fiscaal * bijtellingPct * belastingPct) / 12;
+        } else {
+          const deelLaag = Math.min(fiscaal, drempel);
+          const deelHoog = Math.max(fiscaal - drempel, 0);
+          resultVal = ((deelLaag * laagPct) + (deelHoog * hoogPct)) * belastingPct / 12;
+        }
       }
     }
 
