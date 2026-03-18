@@ -484,7 +484,7 @@
 <div class="container">
 
   <div class="header">
-    <div class="header-badge">MoveBuddy Keuzehulp</div>
+    <div class="header-badge">Movebuddy Keuzehulp</div>
     <h1>Wat mag mijn auto kosten?</h1>
     <p>Vul 2 velden in en vergrendel ze, wij berekenen het derde!</p>
   </div>
@@ -497,8 +497,8 @@
         <div class="field-label">Brandstof</div>
         <div class="select-wrap">
           <select id="bijtelling">
-            <option value="0.22">Brandstof 22%</option>
-            <option value="0.18" selected>Elektrisch 18%</option>
+            <option value="0.22" selected>Brandstof 22%</option>
+            <option value="0.18">Elektrisch 18%</option>
           </select>
         </div>
       </div>
@@ -843,7 +843,16 @@
       const bruto = berekenBruto(fiscaal, bijtellingPct);
       const nettoBijtellingZonderEigen = (bruto * belastingPct) / 12;
 
-      // Iteratief oplossen
+      // Controleer of netto doel haalbaar is
+      // Eigen bijdrage verhoogt altijd de netto autokosten
+      // Minimum netto = bijtelling zonder eigen bijdrage
+      const minNetto = (bruto * belastingPct) / 12;
+      if (netto < minNetto) {
+        showError(`Netto autokosten van €${netto.toFixed(0)} is niet haalbaar bij deze fiscale waarde. Zonder eigen bijdrage betaal je al €${minNetto.toFixed(0)}/mnd. Een hogere netto autokosten invoeren of een lagere fiscale waarde kiezen.`);
+        return;
+      }
+
+      // Iteratief oplossen: netto = (bruto - e*12) * belasting/12 + e
       let e = 0;
       for (let i = 0; i < 200; i++) {
         const eigenJaar = Math.min(e * 12, bruto);
