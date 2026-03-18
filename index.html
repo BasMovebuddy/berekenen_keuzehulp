@@ -477,6 +477,74 @@
     }
 
     .toast.show { transform: translateX(-50%) translateY(0); }
+  @media (max-width: 480px) {
+    /* Instellingen: 2 kolommen ipv 3 */
+    .fields-row {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    /* Budget rij: wrap naar twee regels */
+    .budget-row {
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .budget-row .input-wrap {
+      width: 100% !important;
+    }
+
+    /* Tri-field: label boven, input onder */
+    .tri-field {
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tri-info {
+      flex: 1 1 calc(100% - 50px);
+    }
+
+    .tri-input-wrap {
+      width: 100%;
+      justify-content: flex-end;
+    }
+
+    .tri-input {
+      flex: 1;
+      width: auto;
+      min-width: 0;
+    }
+
+    /* Knoppen iets groter voor touch */
+    .lock-btn {
+      width: 36px;
+      height: 36px;
+    }
+
+    .clear-field-btn {
+      width: 32px;
+      height: 32px;
+    }
+
+    /* Bereken knop */
+    .bereken-btn {
+      font-size: 0.95rem;
+      padding: 12px 16px;
+    }
+
+    /* Header kleiner */
+    h1 { font-size: clamp(1.2rem, 4vw, 1.5rem); }
+  }
+
+  @media (max-width: 360px) {
+    .fields-row {
+      grid-template-columns: 1fr;
+    }
+
+    .tri-icon {
+      display: none;
+    }
+  }
+
   </style>
 </head>
 <body>
@@ -484,7 +552,7 @@
 <div class="container">
 
   <div class="header">
-    <div class="header-badge">Movebuddy Keuzehulp</div>
+    <div class="header-badge">MoveBuddy Keuzehulp</div>
     <h1>Wat mag mijn auto kosten?</h1>
     <p>Vul 2 velden in en vergrendel ze, wij berekenen het derde!</p>
   </div>
@@ -497,8 +565,8 @@
         <div class="field-label">Brandstof</div>
         <div class="select-wrap">
           <select id="bijtelling">
-            <option value="0.22" selected>Brandstof 22%</option>
-            <option value="0.18">Elektrisch 18%</option>
+            <option value="0.22">Brandstof 22%</option>
+            <option value="0.18" selected>Elektrisch 18%</option>
           </select>
         </div>
       </div>
