@@ -1,582 +1,929 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MoveBuddy Lease Calculator</title>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Ubuntu:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Netto Autokosten — Keuzehulp</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700&family=Ubuntu:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  :root {
-    --teal:        #4BBCBA;
-    --teal-dark:   #2E9E9C;
-    --teal-light:  #E8F8F7;
-    --purple:      #7B6FC4;
-    --purple-dark: #5A50A8;
-    --purple-light:#EEEAFB;
-    --text:        #1C3145;
-    --subtext:     #6B7280;
-    --border:      #DDE8E8;
-    --white:       #FFFFFF;
-    --bg:          #F4FAFA;
-  }
+    :root {
+      --teal: #6BBAB9;
+      --teal-dark: #284A43;
+      --teal-light: #e8f6f6;
+      --purple: #9B9BDA;
+      --purple-deep: #6062C5;
+      --purple-light: #f0eefa;
+      --text: #636466;
+      --white: #ffffff;
+      --shadow-card: 0 2px 12px rgba(40,74,67,0.10);
+    }
 
-  body {
-    font-family: 'Ubuntu', sans-serif;
-    background: var(--bg);
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 32px 16px;
-    position: relative;
-    overflow: hidden;
-  }
+    body {
+      font-family: 'Ubuntu', sans-serif;
+      background: linear-gradient(135deg, #e8f6f6 0%, #f0eefa 100%);
+      min-height: 100vh;
+      color: var(--text);
+      padding: 12px;
+    }
 
-  body::before {
-    content: '';
-    position: fixed;
-    top: -120px; left: -120px;
-    width: 420px; height: 420px;
-    background: radial-gradient(circle, rgba(75,188,186,0.18) 0%, transparent 70%);
-    border-radius: 50%;
-    pointer-events: none;
-  }
+    .container { max-width: 480px; margin: 0 auto; padding-bottom: 90px; }
 
-  body::after {
-    content: '';
-    position: fixed;
-    bottom: -100px; right: -80px;
-    width: 360px; height: 360px;
-    background: radial-gradient(circle, rgba(123,111,196,0.12) 0%, transparent 70%);
-    border-radius: 50%;
-    pointer-events: none;
-  }
+    .header { text-align: center; padding: 16px 0 14px; }
 
-  .card {
-    background: var(--white);
-    border-radius: 24px;
-    width: 100%;
-    max-width: 520px;
-    box-shadow: 0 2px 4px rgba(75,188,186,0.08), 0 12px 40px rgba(28,49,69,0.10);
-    overflow: hidden;
-    position: relative;
-    z-index: 1;
-  }
+    .header-badge {
+      display: inline-block;
+      background: var(--teal);
+      color: white;
+      font-family: 'Baloo 2', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 3px 12px;
+      border-radius: 20px;
+      margin-bottom: 8px;
+    }
 
-  .card-header {
-    background: linear-gradient(135deg, #4BBCBA 0%, #2E9E9C 100%);
-    padding: 22px 28px 20px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    position: relative;
-    overflow: hidden;
-  }
+    h1 {
+      font-family: 'Baloo 2', sans-serif;
+      font-size: clamp(1.3rem, 5vw, 1.7rem);
+      color: var(--teal-dark);
+      letter-spacing: 0.03em;
+      line-height: 1.2;
+      margin-bottom: 4px;
+    }
 
-  .card-header::after {
-    content: '';
-    position: absolute;
-    bottom: -30px; right: -30px;
-    width: 120px; height: 120px;
-    background: rgba(255,255,255,0.08);
-    border-radius: 50%;
-    pointer-events: none;
-  }
+    .header p { font-size: 0.88rem; color: var(--text); opacity: 0.7; }
 
-  .header-icon {
-    width: 40px; height: 40px;
-    background: rgba(255,255,255,0.2);
-    border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px;
-    flex-shrink: 0;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  }
+    /* Instellingen card */
+    .card {
+      background: var(--white);
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      box-shadow: var(--shadow-card);
+    }
 
-  .header-text h1 {
-    font-family: 'Baloo 2', sans-serif;
-    font-size: 17px;
-    font-weight: 700;
-    color: #fff;
-    letter-spacing: -0.2px;
-    line-height: 1.2;
-  }
+    .section-label {
+      font-family: 'Baloo 2', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--teal-dark);
+      opacity: 0.6;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 10px;
+    }
 
-  .header-text p {
-    font-size: 12px;
-    color: rgba(255,255,255,0.75);
-    margin-top: 2px;
-    font-weight: 300;
-  }
+    .fields-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
 
-  .card-body {
-    padding: 24px 28px 28px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
+    .field { display: flex; flex-direction: column; gap: 4px; }
 
-  .section-label {
-    font-family: 'Baloo 2', sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--teal-dark);
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    margin-bottom: 10px;
-  }
+    .field-label {
+      font-family: 'Baloo 2', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--teal-dark);
+      opacity: 0.65;
+    }
 
-  .fields-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 12px;
-  }
+    .select-wrap { position: relative; }
 
-  .field { display: flex; flex-direction: column; gap: 5px; }
+    .select-wrap select {
+      width: 100%;
+      padding: 7px 22px 7px 9px;
+      border: 1.5px solid #ebebeb;
+      border-radius: 9px;
+      background: #f9f9f9;
+      font-family: 'Ubuntu', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--teal-dark);
+      appearance: none;
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.15s;
+    }
 
-  .field-label {
-    font-size: 11.5px;
-    font-weight: 500;
-    color: var(--subtext);
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
+    .select-wrap select:focus { border-color: var(--teal); background: var(--teal-light); }
 
-  .select-wrapper { position: relative; }
+    .select-wrap::after {
+      content: '';
+      position: absolute;
+      right: 8px; top: 50%;
+      transform: translateY(-50%);
+      width: 0; height: 0;
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+      border-top: 5px solid var(--text);
+      pointer-events: none;
+      opacity: 0.35;
+    }
 
-  .select-wrapper select {
-    width: 100%;
-    padding: 9px 26px 9px 11px;
-    border: 1.5px solid var(--border);
-    border-radius: 10px;
-    background: var(--white);
-    font-family: 'Ubuntu', sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text);
-    appearance: none;
-    cursor: pointer;
-    outline: none;
-    transition: border-color 0.15s, box-shadow 0.15s;
-  }
+    /* Leasebudget rij */
+    .budget-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+    }
 
-  .select-wrapper select:focus {
-    border-color: var(--teal);
-    box-shadow: 0 0 0 3px rgba(75,188,186,0.15);
-  }
+    .budget-label {
+      font-family: 'Baloo 2', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--teal-dark);
+      opacity: 0.65;
+      white-space: nowrap;
+    }
 
-  .select-wrapper::after {
-    content: '';
-    position: absolute;
-    right: 10px; top: 50%;
-    transform: translateY(-50%);
-    width: 0; height: 0;
-    border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
-    border-top: 5px solid var(--subtext);
-    pointer-events: none;
-  }
+    .input-wrap {
+      display: flex;
+      align-items: stretch;
+      border: 1.5px solid #ebebeb;
+      border-radius: 9px;
+      overflow: hidden;
+      background: #f9f9f9;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
 
-  .mode-toggle {
-    display: flex;
-    background: var(--purple-light);
-    border-radius: 12px;
-    padding: 4px;
-    gap: 4px;
-  }
+    .input-wrap:focus-within {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(107,186,185,0.15);
+      background: var(--white);
+    }
 
-  .mode-btn {
-    flex: 1;
-    padding: 9px 10px;
-    border-radius: 9px;
-    border: none;
-    background: transparent;
-    font-family: 'Baloo 2', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--purple);
-    cursor: pointer;
-    transition: all 0.18s ease;
-    text-align: center;
-  }
+    .input-prefix {
+      padding: 0 8px;
+      font-family: 'Baloo 2', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--teal-dark);
+      background: var(--teal-light);
+      display: flex;
+      align-items: center;
+      border-right: 1.5px solid rgba(107,186,185,0.2);
+      flex-shrink: 0;
+    }
 
-  .mode-btn.active {
-    background: var(--purple);
-    color: #fff;
-    box-shadow: 0 2px 10px rgba(123,111,196,0.35);
-  }
+    .input-wrap input {
+      flex: 1;
+      padding: 8px 10px;
+      border: none;
+      font-family: 'Ubuntu', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--teal-dark);
+      outline: none;
+      background: transparent;
+      min-width: 0;
+    }
 
-  .mode-btn:not(.active):hover { background: rgba(123,111,196,0.12); }
+    .input-wrap input::placeholder { color: #c5d4d4; font-size: 0.88rem; }
 
-  .input-area { display: flex; flex-direction: column; gap: 6px; }
+    /* Driehoek velden */
+    .triangle-card {
+      background: var(--white);
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      box-shadow: var(--shadow-card);
+    }
 
-  .input-field-label {
-    font-size: 11.5px;
-    font-weight: 500;
-    color: var(--subtext);
-  }
+    .tri-field {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
 
-  .input-with-prefix {
-    display: flex;
-    align-items: stretch;
-    border: 1.5px solid var(--teal);
-    border-radius: 12px;
-    overflow: hidden;
-    background: var(--white);
-    transition: box-shadow 0.15s;
-  }
+    .tri-field:last-child { border-bottom: none; padding-bottom: 0; }
+    .tri-field:first-child { padding-top: 0; }
 
-  .input-with-prefix:focus-within {
-    box-shadow: 0 0 0 3px rgba(75,188,186,0.18);
-  }
+    .tri-icon {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
 
-  .input-prefix {
-    padding: 0 14px;
-    font-family: 'Baloo 2', sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--teal-dark);
-    background: var(--teal-light);
-    display: flex;
-    align-items: center;
-    border-right: 1.5px solid rgba(75,188,186,0.25);
-    flex-shrink: 0;
-  }
+    .tri-icon.teal   { background: var(--teal-light); }
+    .tri-icon.purple { background: var(--purple-light); }
+    .tri-icon.green  { background: #eaf7f0; }
 
-  .input-with-prefix input {
-    flex: 1;
-    padding: 11px 14px;
-    border: none;
-    font-family: 'Ubuntu', sans-serif;
-    font-size: 17px;
-    font-weight: 500;
-    color: var(--text);
-    outline: none;
-    background: transparent;
-    min-width: 0;
-  }
+    .tri-info { flex: 1; min-width: 0; }
 
-  .input-with-prefix input::placeholder { color: #c0cdd0; font-weight: 300; font-size: 15px; }
+    .tri-label {
+      font-family: 'Baloo 2', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--teal-dark);
+    }
 
-  .divider { height: 1px; background: var(--border); }
+    .tri-sub {
+      font-size: 0.72rem;
+      color: var(--text);
+      opacity: 0.55;
+      margin-top: 1px;
+    }
 
-  .result-card {
-    background: linear-gradient(135deg, #4BBCBA 0%, #3AABAA 100%);
-    border-radius: 16px;
-    padding: 18px 22px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: 0 4px 20px rgba(75,188,186,0.3);
-    position: relative;
-    overflow: hidden;
-  }
+    .tri-input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
 
-  .result-card::before {
-    content: '';
-    position: absolute;
-    top: -20px; right: -20px;
-    width: 100px; height: 100px;
-    background: rgba(255,255,255,0.08);
-    border-radius: 50%;
-    pointer-events: none;
-  }
+    .tri-input {
+      display: flex;
+      align-items: stretch;
+      border: 1.5px solid #ebebeb;
+      border-radius: 9px;
+      overflow: hidden;
+      background: #f9f9f9;
+      width: 120px;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
 
-  .result-left { display: flex; flex-direction: column; gap: 3px; }
+    .tri-input:focus-within {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(107,186,185,0.15);
+      background: var(--white);
+    }
 
-  .result-tag {
-    font-family: 'Baloo 2', sans-serif;
-    font-size: 10px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: rgba(255,255,255,0.7);
-  }
+    .tri-input.is-result {
+      border-color: var(--teal);
+      background: var(--teal-light);
+    }
 
-  .result-sublabel {
-    font-family: 'Baloo 2', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    color: #fff;
-    margin-top: 2px;
-  }
+    .tri-input.is-result input {
+      color: var(--teal-dark);
+      font-weight: 700;
+    }
 
-  .result-amount { display: flex; align-items: baseline; gap: 4px; }
+    .tri-input .input-prefix {
+      font-size: 0.78rem;
+      padding: 0 7px;
+    }
 
-  .result-euro {
-    font-family: 'Baloo 2', sans-serif;
-    font-size: 17px;
-    font-weight: 600;
-    color: rgba(255,255,255,0.7);
-  }
+    .tri-input input {
+      flex: 1;
+      padding: 8px 8px;
+      border: none;
+      font-family: 'Ubuntu', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--teal-dark);
+      outline: none;
+      background: transparent;
+      min-width: 0;
+      width: 100%;
+    }
 
-  .result-value {
-    font-family: 'Baloo 2', sans-serif;
-    font-size: 34px;
-    font-weight: 800;
-    color: #fff;
-    letter-spacing: -1.5px;
-    text-shadow: 0 1px 4px rgba(0,0,0,0.1);
-    transition: all 0.2s ease;
-  }
+    .tri-input input::placeholder { color: #c5d4d4; font-size: 0.85rem; }
+    .tri-input input:disabled { color: var(--teal-dark); cursor: default; }
 
-  .result-value.updated { animation: pop 0.3s cubic-bezier(0.16,1,0.3,1); }
+    /* Lock button */
+    .clear-field-btn {
+      width: 26px; height: 26px;
+      border-radius: 7px;
+      border: 1.5px solid #ebebeb;
+      background: #f9f9f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s;
+      flex-shrink: 0;
+      font-size: 11px;
+      color: var(--text);
+      opacity: 0.5;
+    }
 
-  @keyframes pop {
-    0% { transform: scale(0.92); opacity: 0.5; }
-    100% { transform: scale(1); opacity: 1; }
-  }
+    .clear-field-btn:hover { border-color: #e57373; background: #fdecea; color: #c0392b; opacity: 1; }
 
-  .tooltip-trigger {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 14px; height: 14px;
-    border-radius: 50%;
-    background: var(--purple-light);
-    border: 1px solid var(--purple);
-    color: var(--purple);
-    font-size: 9px;
-    font-weight: 700;
-    cursor: default;
-    margin-left: 4px;
-    flex-shrink: 0;
-    position: relative;
-  }
+    .lock-btn {
+      width: 30px; height: 30px;
+      border-radius: 8px;
+      border: 1.5px solid #ebebeb;
+      background: #f9f9f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s;
+      flex-shrink: 0;
+      font-size: 13px;
+    }
 
-  .tooltip-box {
-    display: none;
-    position: absolute;
-    bottom: calc(100% + 7px);
-    right: 0; left: auto;
-    background: var(--text);
-    color: #e8f0f0;
-    border-radius: 10px;
-    padding: 9px 13px;
-    font-family: 'Ubuntu', sans-serif;
-    font-size: 11.5px;
-    line-height: 1.75;
-    white-space: nowrap;
-    z-index: 100;
-    box-shadow: 0 6px 20px rgba(28,49,69,0.25);
-    pointer-events: none;
-  }
+    .lock-btn:hover { border-color: var(--teal); background: var(--teal-light); }
+    .lock-btn.locked { border-color: var(--teal-dark); background: var(--teal-dark); }
 
-  .tooltip-box::after {
-    content: '';
-    position: absolute;
-    top: 100%; right: 5px;
-    border: 5px solid transparent;
-    border-top-color: var(--text);
-  }
+    /* Bereken knop */
+    .bereken-btn {
+      width: 100%;
+      font-family: 'Baloo 2', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      background: var(--teal-dark);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 13px 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-bottom: 10px;
+    }
 
-  .tooltip-trigger:hover .tooltip-box,
-  .tooltip-trigger:focus .tooltip-box { display: block; }
+    .bereken-btn:hover { background: var(--teal); transform: translateY(-1px); }
+    .bereken-btn:active { transform: translateY(0); }
 
-  .hidden { display: none; }
+    /* Error */
+    .error-msg {
+      background: #fdecea;
+      border: 1.5px solid #e57373;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-family: 'Baloo 2', sans-serif;
+      font-size: 0.82rem;
+      color: #c0392b;
+      margin-bottom: 10px;
+      display: none;
+    }
 
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(5px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  .fade-in { animation: fadeIn 0.2s ease; }
+    /* Tooltip */
+    .tooltip-trigger {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 13px; height: 13px;
+      border-radius: 50%;
+      background: var(--teal-light);
+      border: 1px solid var(--teal);
+      color: var(--teal-dark);
+      font-size: 9px;
+      font-weight: 700;
+      cursor: default;
+      position: relative;
+      margin-left: 3px;
+      flex-shrink: 0;
+    }
 
-  .card-footer {
-    padding: 12px 28px 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    border-top: 1px solid var(--border);
-  }
+    .tooltip-box {
+      display: none;
+      position: absolute;
+      bottom: calc(100% + 7px);
+      right: 0;
+      background: var(--teal-dark);
+      color: rgba(255,255,255,0.9);
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-family: 'Ubuntu', sans-serif;
+      font-size: 11px;
+      line-height: 1.7;
+      white-space: nowrap;
+      z-index: 100;
+      box-shadow: 0 6px 20px rgba(40,74,67,0.25);
+      pointer-events: none;
+    }
 
-  .footer-logo {
-    font-family: 'Baloo 2', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--teal-dark);
-  }
+    .tooltip-box::after {
+      content: '';
+      position: absolute;
+      top: 100%; right: 5px;
+      border: 5px solid transparent;
+      border-top-color: var(--teal-dark);
+    }
 
-  .footer-dot { color: var(--purple); font-weight: 800; }
+    .tooltip-trigger:hover .tooltip-box { display: block; }
 
-  .footer-sub {
-    font-size: 11px;
-    color: var(--subtext);
-    font-weight: 300;
-  }
-</style>
+    /* Summary bar */
+    .summary-bar {
+      position: fixed;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 24px);
+      max-width: 480px;
+      z-index: 10;
+    }
+
+    .summary-inner {
+      background: var(--teal-dark);
+      border-radius: 14px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      box-shadow: 0 6px 24px rgba(40,74,67,0.3);
+    }
+
+    .summary-label {
+      font-family: 'Baloo 2', sans-serif;
+      font-size: 0.7rem;
+      color: var(--teal);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .summary-count {
+      font-family: 'Baloo 2', sans-serif;
+      font-size: 0.92rem;
+      color: white;
+      font-weight: 700;
+    }
+
+    .send-btn {
+      font-family: 'Baloo 2', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      background: var(--teal);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 8px 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .send-btn:hover { background: #5aa9a8; transform: translateY(-1px); }
+
+    .toast {
+      position: fixed;
+      top: 16px; left: 50%;
+      transform: translateX(-50%) translateY(-60px);
+      background: var(--teal-dark);
+      color: white;
+      font-family: 'Baloo 2', sans-serif;
+      font-size: 0.82rem;
+      padding: 8px 18px;
+      border-radius: 30px;
+      z-index: 100;
+      transition: transform 0.3s ease;
+      white-space: nowrap;
+    }
+
+    .toast.show { transform: translateX(-50%) translateY(0); }
+  </style>
 </head>
 <body>
 
-<div class="card">
+<div class="container">
 
-  <div class="card-header">
-    <div class="header-icon">🚗</div>
-    <div class="header-text">
-      <h1>MoveBuddy Lease Calculator</h1>
-      <p>Bereken je fiscale waarde of netto bijtelling</p>
-    </div>
+  <div class="header">
+    <div class="header-badge">MoveBuddy Keuzehulp</div>
+    <h1>Wat mag mijn auto kosten?</h1>
+    <p>Vul 2 velden in en vergrendel ze, wij berekenen het derde!</p>
   </div>
 
-  <div class="card-body">
-
-    <div>
-      <div class="section-label">Instellingen</div>
-      <div class="fields-row">
-
-        <div class="field">
-          <div class="field-label">Levering</div>
-          <div class="select-wrapper">
-            <select id="leveringsjaar" onchange="calculate()">
-              <option value="2026" selected>2026</option>
-            </select>
-          </div>
+  <!-- Instellingen -->
+  <div class="card">
+    <div class="section-label">Instellingen</div>
+    <div class="fields-row">
+      <div class="field">
+        <div class="field-label">Brandstof</div>
+        <div class="select-wrap">
+          <select id="bijtelling">
+            <option value="0.22">Brandstof 22%</option>
+            <option value="0.18" selected>Elektrisch 18%</option>
+          </select>
         </div>
-
-        <div class="field">
-          <div class="field-label">Bijtelling</div>
-          <div class="select-wrapper">
-            <select id="bijtelling" onchange="calculate()">
-              <option value="0.22" selected>22%</option>
-              <option value="0.18">18% – elektrisch</option>
-            </select>
-          </div>
+      </div>
+      <div class="field">
+        <div class="field-label">
+          Belastingschaal
+          <span class="tooltip-trigger">?
+            <div class="tooltip-box">
+              35,75% — t/m €38.441<br>
+              37,48% — €38.441–€76.817<br>
+              49,50% — boven €76.817
+            </div>
+          </span>
         </div>
-
-        <div class="field">
-          <div class="field-label">
-            Belastingschaal
-            <span class="tooltip-trigger" tabindex="0">?
-              <div class="tooltip-box">
-                35,75% — t/m €38.441<br>
-                37,48% — €38.441 t/m €76.817<br>
-                49,50% — boven €76.817
-              </div>
-            </span>
-          </div>
-          <div class="select-wrapper">
-            <select id="belasting" onchange="calculate()">
-              <option value="0.3575" selected>35,75%</option>
-              <option value="0.3748">37,48%</option>
-              <option value="0.495">49,50%</option>
-            </select>
-          </div>
+        <div class="select-wrap">
+          <select id="belasting">
+            <option value="0.3575" selected>35,75%</option>
+            <option value="0.3748">37,48%</option>
+            <option value="0.495">49,50%</option>
+          </select>
         </div>
-
+      </div>
+      <div class="field">
+        <div class="field-label">
+          Max overschrijding
+          <span class="tooltip-trigger">?
+            <div class="tooltip-box">
+              Hoeveel % boven je leasebudget<br>mag je eigen bijdrage zijn?
+            </div>
+          </span>
+        </div>
+        <div style="display:flex; align-items:center; gap:6px; margin-top:2px;">
+          <input type="range" id="overschrijding" min="0" max="20" step="1" value="10"
+            oninput="document.getElementById('overschrijding-val').textContent=this.value+'%'; updateMaxLabel()"
+            style="flex:1; height:4px; accent-color:var(--teal-dark); cursor:pointer;" />
+          <span id="overschrijding-val" style="font-family:'Baloo 2',sans-serif; font-size:0.82rem; font-weight:700; color:var(--teal-dark); min-width:28px; text-align:right;">10%</span>
+        </div>
       </div>
     </div>
-
-    <div class="divider"></div>
-
-    <div>
-      <div class="section-label">Wat wil je berekenen?</div>
-      <div class="mode-toggle">
-        <button class="mode-btn active" id="tab-netto" onclick="setModus('netto')">Fiscale waarde</button>
-        <button class="mode-btn" id="tab-fiscaal" onclick="setModus('fiscaal')">Netto bijtelling</button>
+    <div class="budget-row">
+      <div class="budget-label" style="display:flex; align-items:center; gap:3px;">
+        Leasebudget werkgever
+        <span class="tooltip-trigger">?
+          <div class="tooltip-box" style="white-space:normal; width:260px; right:auto; left:50%; transform:translateX(-50%); line-height:1.5;">
+            Het leasebudget hangt af van merk, model, looptijd, kilometers en restwaarde. Het is daarom niet mogelijk om de fiscale waarde van een auto direct uit het leasebudget te berekenen.
+          </div>
+        </span>
       </div>
-    </div>
-
-    <div id="field-netto" class="input-area fade-in">
-      <div class="input-field-label">Max. netto bijtelling per maand</div>
-      <div class="input-with-prefix">
+      <div class="input-wrap" style="width:140px;">
         <span class="input-prefix">€</span>
-        <input type="number" id="input-netto" placeholder="330" min="0" step="1" oninput="calculate()">
+        <input type="number" id="leasebudget" placeholder="850" min="0" step="10" />
       </div>
+      <div class="budget-label" id="max-eigen-label" style="opacity:0.5; font-size:0.7rem;"></div>
     </div>
-
-    <div id="field-fiscaal" class="input-area hidden fade-in">
-      <div class="input-field-label">Fiscale waarde van de auto</div>
-      <div class="input-with-prefix">
-        <span class="input-prefix">€</span>
-        <input type="number" id="input-fiscaal" placeholder="40000" min="0" step="100" oninput="calculate()">
-      </div>
-    </div>
-
-    <div class="result-card">
-      <div class="result-left">
-        <div class="result-tag">Uitkomst</div>
-        <div class="result-sublabel" id="result-label">Max. fiscale waarde</div>
-      </div>
-      <div class="result-amount">
-        <span class="result-euro">€</span>
-        <span class="result-value" id="result">—</span>
-      </div>
-    </div>
-
   </div>
 
-  <div class="card-footer">
-    <span class="footer-logo">·movebuddy</span>
-    <span class="footer-sub">moving employees everywhere</span>
+  <!-- Driehoek -->
+  <div class="triangle-card">
+    <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px;">
+      <div class="section-label" style="margin-bottom:0;">Bereken één van de drie</div>
+      <span class="tooltip-trigger">?
+        <div class="tooltip-box" style="white-space:normal; width:240px; right:auto; left:50%; transform:translateX(-50%); line-height:1.5;">
+          Vul 2 velden in en klik op 🔓 om ze te vergrendelen. Het derde veld wordt dan automatisch berekend via de Bereken knop. Gebruik ✕ om een veld te legen en te ontgrendelen.
+        </div>
+      </span>
+    </div>
+
+    <!-- Fiscale waarde -->
+    <div class="tri-field">
+      <div class="tri-icon teal">🚗</div>
+      <div class="tri-info">
+        <div class="tri-label">Fiscale waarde</div>
+        <div class="tri-sub">Catalogusprijs van de auto</div>
+      </div>
+      <div class="tri-input-wrap">
+        <div class="tri-input" id="wrap-fiscaal">
+          <span class="input-prefix">€</span>
+          <input type="number" id="fiscaal" placeholder="" min="0" step="500" />
+        </div>
+        <button class="clear-field-btn" onclick="clearVeld('fiscaal')" title="Leeg dit veld">✕</button>
+        <button class="lock-btn" id="lock-fiscaal" onclick="toggleLock('fiscaal')" title="Vergrendel dit veld">🔓</button>
+      </div>
+    </div>
+
+    <!-- Eigen bijdrage -->
+    <div class="tri-field">
+      <div class="tri-icon purple">💳</div>
+      <div class="tri-info">
+        <div class="tri-label">Eigen bijdrage</div>
+        <div class="tri-sub">Jouw maandelijkse bijdrage</div>
+      </div>
+      <div class="tri-input-wrap">
+        <div class="tri-input" id="wrap-eigen">
+          <span class="input-prefix">€</span>
+          <input type="number" id="eigen" placeholder="" min="0" step="10" oninput="checkEigenMax()" />
+        </div>
+        <button class="clear-field-btn" onclick="clearVeld('eigen')" title="Leeg dit veld">✕</button>
+        <button class="lock-btn" id="lock-eigen" onclick="toggleLock('eigen')" title="Vergrendel dit veld">🔓</button>
+      </div>
+    </div>
+    <div id="eigen-warning" style="display:none; margin-top:-4px; margin-bottom:8px; padding:7px 12px; background:#fff8e1; border:1.5px solid #f9a825; border-radius:9px; font-family:'Baloo 2',sans-serif; font-size:0.78rem; color:#e65100;">
+      ⚠️ <span id="eigen-warning-text"></span>
+    </div>
+
+    <!-- Netto autokosten -->
+    <div class="tri-field">
+      <div class="tri-icon green">💶</div>
+      <div class="tri-info">
+        <div class="tri-label">Netto autokosten</div>
+        <div class="tri-sub">Bijtelling + eigen bijdrage</div>
+      </div>
+      <div class="tri-input-wrap">
+        <div class="tri-input" id="wrap-netto">
+          <span class="input-prefix">€</span>
+          <input type="number" id="netto" placeholder="" min="0" step="5" />
+        </div>
+        <button class="clear-field-btn" onclick="clearVeld('netto')" title="Leeg dit veld">✕</button>
+        <button class="lock-btn" id="lock-netto" onclick="toggleLock('netto')" title="Vergrendel dit veld">🔓</button>
+      </div>
+    </div>
   </div>
+
+  <div class="error-msg" id="error-msg"></div>
+
+  <button class="bereken-btn" onclick="bereken()">Bereken →</button>
 
 </div>
 
+<div class="summary-bar">
+  <div class="summary-inner">
+    <div>
+      <div class="summary-label">Resultaat</div>
+      <div class="summary-count" id="summary-text">Vergrendel 2 velden en bereken</div>
+    </div>
+    <button class="send-btn" onclick="verzenden()">Verstuur →</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
 <script>
-  let modus = 'netto';
+  const locked = { fiscaal: false, eigen: false, netto: false };
+  let resultVeld = null;
 
-  function setModus(m) {
-    modus = m;
-    document.getElementById('tab-netto').classList.toggle('active', m === 'netto');
-    document.getElementById('tab-fiscaal').classList.toggle('active', m === 'fiscaal');
-    document.getElementById('field-netto').classList.toggle('hidden', m !== 'netto');
-    document.getElementById('field-fiscaal').classList.toggle('hidden', m !== 'fiscaal');
-    document.getElementById('result-label').textContent = m === 'netto' ? 'Max. fiscale waarde' : 'Netto bijtelling per maand';
-    calculate();
+  // Update max eigen bijdrage label
+  document.getElementById('leasebudget').addEventListener('input', updateMaxLabel);
+  document.getElementById('overschrijding').addEventListener('change', updateMaxLabel);
+
+  function getMaxEigen() {
+    const budget = parseFloat(document.getElementById('leasebudget').value) || 0;
+    const pct    = parseFloat(document.getElementById('overschrijding').value) / 100;
+    return budget * pct;
   }
 
-  function formatNL(val, decimals = 2) {
-    return val.toLocaleString('nl-NL', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+  function checkEigenMax() {
+    const eigen   = parseFloat(document.getElementById('eigen').value) || 0;
+    const maxEigen = getMaxEigen();
+    const warning  = document.getElementById('eigen-warning');
+    const warnText = document.getElementById('eigen-warning-text');
+
+    if (maxEigen > 0 && eigen > maxEigen) {
+      // Blokkeer: zet waarde terug naar max
+      document.getElementById('eigen').value = maxEigen.toFixed(0);
+      warnText.textContent = `Maximum eigen bijdrage is €${maxEigen.toFixed(0)} (${document.getElementById('overschrijding').value}% van €${document.getElementById('leasebudget').value || 0} leasebudget).`;
+      warning.style.display = 'block';
+      setTimeout(() => { warning.style.display = 'none'; }, 4000);
+    } else {
+      warning.style.display = 'none';
+    }
   }
 
-  function calculate() {
-    const bijtellingPct = parseFloat(document.getElementById('bijtelling').value);
-    const belastingPct  = parseFloat(document.getElementById('belasting').value);
-    const isElektrisch  = bijtellingPct === 0.18;
-    const drempel       = 30000;
-    const laagPct       = 0.18;
-    const hoogPct       = 0.22;
-    const resultEl      = document.getElementById('result');
-    let resultVal       = null;
+  function clearVeld(veld) {
+    locked[veld] = false;
+    const inp = document.getElementById(veld);
+    inp.value = '';
+    inp.disabled = false;
+    updateLockUI();
+  }
 
-    if (modus === 'netto') {
-      const netto = parseFloat(document.getElementById('input-netto').value);
-      if (!isNaN(netto) && netto > 0) {
-        if (!isElektrisch) {
-          resultVal = (netto * 12) / (bijtellingPct * belastingPct);
-        } else {
-          const nettoOpDrempel = (drempel * laagPct * belastingPct) / 12;
-          if (netto <= nettoOpDrempel) {
-            resultVal = (netto * 12) / (laagPct * belastingPct);
-          } else {
-            const nettoRest = netto - nettoOpDrempel;
-            resultVal = drempel + (nettoRest * 12) / (hoogPct * belastingPct);
-          }
+  function updateMaxLabel() {
+    const budget = parseFloat(document.getElementById('leasebudget').value) || 0;
+    const pct    = parseFloat(document.getElementById('overschrijding').value) / 100;
+    const max    = budget * pct;
+    const label  = document.getElementById('max-eigen-label');
+    label.textContent = budget > 0 && pct > 0
+      ? `→ max eigen bijdrage: €${max.toLocaleString('nl-NL', {maximumFractionDigits:0})}/mnd`
+      : '';
+  }
+
+  function toggleLock(veld) {
+    const aantalLocked = Object.values(locked).filter(Boolean).length;
+
+    if (locked[veld]) {
+      // Ontgrendel
+      locked[veld] = false;
+    } else {
+      // Max 2 vergrendeld
+      if (aantalLocked >= 2) {
+        showToast('⚠️ Je kunt maar 2 velden vergrendelen');
+        return;
+      }
+      locked[veld] = true;
+    }
+
+    updateLockUI();
+  }
+
+  function updateLockUI() {
+    // Determine resultVeld first
+    const openVelden = ['fiscaal', 'eigen', 'netto'].filter(v => !locked[v]);
+    resultVeld = openVelden.length === 1 ? openVelden[0] : null;
+
+    ['fiscaal', 'eigen', 'netto'].forEach(v => {
+      const btn  = document.getElementById('lock-' + v);
+      const wrap = document.getElementById('wrap-' + v);
+      const inp  = document.getElementById(v);
+
+      if (locked[v]) {
+        // Vergrendeld: donker slot, niet aanpasbaar
+        btn.classList.add('locked');
+        btn.textContent = '🔒';
+        wrap.classList.remove('is-result');
+        inp.disabled = true;
+        inp.style.opacity = '1';
+        wrap.style.background = '#f0f0f0';
+        wrap.style.borderColor = '#d0d0d0';
+      } else if (v === resultVeld) {
+        // Te berekenen veld: teal, leeg
+        btn.classList.remove('locked');
+        btn.textContent = '🔓';
+        wrap.classList.add('is-result');
+        wrap.style.background = '';
+        wrap.style.borderColor = '';
+        inp.disabled = true;
+        inp.value = '';
+        inp.placeholder = 'wordt berekend...';
+      } else {
+        // Vrij invoerveld
+        btn.classList.remove('locked');
+        btn.textContent = '🔓';
+        wrap.classList.remove('is-result');
+        wrap.style.background = '';
+        wrap.style.borderColor = '';
+        inp.disabled = false;
+        inp.style.opacity = '1';
+        if (!inp.value) {
+          inp.placeholder = '';
         }
       }
-    } else {
-      const fiscaal = parseFloat(document.getElementById('input-fiscaal').value);
-      if (!isNaN(fiscaal) && fiscaal > 0) {
-        if (!isElektrisch) {
-          resultVal = (fiscaal * bijtellingPct * belastingPct) / 12;
-        } else {
-          const deelLaag = Math.min(fiscaal, drempel);
-          const deelHoog = Math.max(fiscaal - drempel, 0);
-          resultVal = ((deelLaag * laagPct) + (deelHoog * hoogPct)) * belastingPct / 12;
+    });
+
+    document.getElementById('error-msg').style.display = 'none';
+  }
+
+  function berekenBruto(fiscaal, bijtellingPct) {
+    const drempel = 30000;
+    if (bijtellingPct !== 0.18) return fiscaal * bijtellingPct;
+    return Math.min(fiscaal, drempel) * 0.18 + Math.max(fiscaal - drempel, 0) * 0.22;
+  }
+
+  function maxFiscaalVanNetto(nettoBudget, bijtellingPct, belastingPct) {
+    const drempel = 30000;
+    if (bijtellingPct !== 0.18) return (nettoBudget * 12) / (bijtellingPct * belastingPct);
+    const nettoOpDrempel = (drempel * 0.18 * belastingPct) / 12;
+    if (nettoBudget <= nettoOpDrempel) return (nettoBudget * 12) / (0.18 * belastingPct);
+    return drempel + ((nettoBudget - nettoOpDrempel) * 12) / (0.22 * belastingPct);
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('error-msg');
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+
+  function bereken() {
+    document.getElementById('error-msg').style.display = 'none';
+
+    if (!resultVeld) {
+      showError('Vergrendel precies 2 velden om het derde te berekenen.');
+      return;
+    }
+
+    const bijtellingPct = parseFloat(document.getElementById('bijtelling').value);
+    const belastingPct  = parseFloat(document.getElementById('belasting').value);
+    const budget        = parseFloat(document.getElementById('leasebudget').value) || 0;
+    const maxPct        = parseFloat(document.getElementById('overschrijding').value) / 100;
+    const maxEigen      = getMaxEigen();
+
+    let fiscaal = parseFloat(document.getElementById('fiscaal').value) || null;
+    let eigen   = parseFloat(document.getElementById('eigen').value) || 0;
+    let netto   = parseFloat(document.getElementById('netto').value) || null;
+
+    let resultaat = null;
+
+    if (resultVeld === 'netto') {
+      // Fiscale waarde + eigen bijdrage → netto autokosten
+      if (!fiscaal) { showError('Vul de fiscale waarde in.'); return; }
+      const bruto        = berekenBruto(fiscaal, bijtellingPct);
+      const eigenJaar    = Math.min(eigen * 12, bruto);
+      const belastbaar   = Math.max(0, bruto - eigenJaar);
+      const nettoBijtelling = (belastbaar * belastingPct) / 12;
+      resultaat = nettoBijtelling + eigen;
+      document.getElementById('netto').value = resultaat.toFixed(2);
+
+    } else if (resultVeld === 'fiscaal') {
+      // Netto autokosten + eigen bijdrage → fiscale waarde
+      if (!netto) { showError('Vul de netto autokosten in.'); return; }
+      const nettoBijtelling = netto - eigen;
+      if (nettoBijtelling < 0) { showError('Eigen bijdrage kan niet hoger zijn dan de netto autokosten.'); return; }
+      // Omgekeerde berekening: netto bijtelling met eigen bijdrage verrekend
+      // netto bijtelling = (bruto - eigen*12) * belasting / 12
+      // bruto = fiscaal * bijtellingPct
+      // Dus: nettoBijtelling = (fiscaal * bijtellingPct - eigen*12) * belasting / 12
+      // fiscaal = (nettoBijtelling * 12 / belasting + eigen*12) / bijtellingPct
+      // Dit is een benadering voor niet-elektrisch; voor elektrisch itereren we
+      if (bijtellingPct !== 0.18) {
+        resultaat = (nettoBijtelling * 12 / belastingPct + eigen * 12) / bijtellingPct;
+      } else {
+        // Iteratieve benadering voor elektrisch
+        let f = maxFiscaalVanNetto(nettoBijtelling, bijtellingPct, belastingPct);
+        for (let i = 0; i < 20; i++) {
+          const bruto = berekenBruto(f, bijtellingPct);
+          const eigenJaar = Math.min(eigen * 12, bruto);
+          const nb = (Math.max(0, bruto - eigenJaar) * belastingPct) / 12;
+          const delta = nettoBijtelling - nb;
+          f += delta / bijtellingPct * 10;
+          if (Math.abs(delta) < 0.01) break;
         }
+        resultaat = f;
+      }
+      document.getElementById('fiscaal').value = Math.round(resultaat);
+
+    } else if (resultVeld === 'eigen') {
+      // Fiscale waarde + netto autokosten → eigen bijdrage
+      // Logica: netto autokosten = netto bijtelling (na aftrek eigen bijdrage) + eigen bijdrage
+      // netto bijtelling = (bruto - eigen*12) * belasting / 12
+      // netto = (bruto - eigen*12) * belasting / 12 + eigen
+      // Oplossing: iteratief (werkt voor zowel elektrisch als brandstof)
+      if (!fiscaal) { showError('Vul de fiscale waarde in.'); return; }
+      if (!netto)   { showError('Vul de netto autokosten in.'); return; }
+
+      const bruto = berekenBruto(fiscaal, bijtellingPct);
+      const nettoBijtellingZonderEigen = (bruto * belastingPct) / 12;
+
+      // Iteratief oplossen
+      let e = 0;
+      for (let i = 0; i < 200; i++) {
+        const eigenJaar = Math.min(e * 12, bruto);
+        const nb = (Math.max(0, bruto - eigenJaar) * belastingPct) / 12;
+        const huidigNetto = nb + e;
+        const diff = netto - huidigNetto;
+        if (Math.abs(diff) < 0.001) break;
+        e += diff * 0.5;
+        if (e < 0) e = 0;
+      }
+      resultaat = e;
+
+      document.getElementById('eigen').value = resultaat.toFixed(2);
+
+      // Waarschuwing als berekend resultaat boven max eigen bijdrage uitkomt
+      if (maxEigen > 0 && resultaat > maxEigen) {
+        const warnEl = document.getElementById('eigen-warning');
+        document.getElementById('eigen-warning-text').textContent =
+          `Berekende eigen bijdrage €${resultaat.toFixed(0)} overschrijdt je maximum van €${maxEigen.toFixed(0)} (${document.getElementById('overschrijding').value}% van leasebudget).`;
+        warnEl.style.display = 'block';
+      } else {
+        document.getElementById('eigen-warning').style.display = 'none';
       }
     }
 
-    resultEl.textContent = resultVal !== null ? formatNL(resultVal) : '—';
-    resultEl.classList.remove('updated');
-    void resultEl.offsetWidth;
-    resultEl.classList.add('updated');
+    // Update summary
+    const bijtellingEl = document.getElementById('bijtelling');
+    const belastingEl  = document.getElementById('belasting');
+    const fVal  = parseFloat(document.getElementById('fiscaal').value) || 0;
+    const eVal  = parseFloat(document.getElementById('eigen').value) || 0;
+    const nVal  = parseFloat(document.getElementById('netto').value) || 0;
+
+    document.getElementById('summary-text').textContent =
+      `Fiscale waarde €${fVal.toLocaleString('nl-NL', {maximumFractionDigits:0})} · Eigen bijdrage €${eVal.toFixed(0)} · Netto €${nVal.toFixed(0)}/mnd`;
+
+    // Style het resultaatveld met groene kleur
+    const resultEl = document.getElementById(resultVeld);
+    const resultWrap = document.getElementById('wrap-' + resultVeld);
+    resultEl.style.color = 'var(--teal-dark)';
+    resultEl.style.fontWeight = '700';
+    resultWrap.style.borderColor = 'var(--teal)';
+    resultWrap.style.background = 'var(--teal-light)';
+    resultEl.disabled = true;
   }
 
-  calculate();
+  function formatNL(val, dec = 2) {
+    return val.toLocaleString('nl-NL', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+  }
+
+  function verzenden() {
+    const fVal = parseFloat(document.getElementById('fiscaal').value);
+    const eVal = parseFloat(document.getElementById('eigen').value) || 0;
+    const nVal = parseFloat(document.getElementById('netto').value);
+
+    if (!fVal || !nVal) { showToast('⚠️ Bereken eerst een resultaat'); return; }
+
+    const bijtellingEl = document.getElementById('bijtelling');
+    const belastingEl  = document.getElementById('belasting');
+    const budget       = parseFloat(document.getElementById('leasebudget').value) || 0;
+
+    const data = [
+      `Fiscale waarde: €${fVal.toLocaleString('nl-NL', {maximumFractionDigits:0})}`,
+      `Brandstof: ${bijtellingEl.options[bijtellingEl.selectedIndex].text}`,
+      `Belastingschaal: ${belastingEl.options[belastingEl.selectedIndex].text}`,
+      budget > 0 ? `Leasebudget: €${budget.toLocaleString('nl-NL')}` : null,
+      eVal > 0 ? `Eigen bijdrage: €${formatNL(eVal)}` : null,
+      `Netto autokosten: €${formatNL(nVal)}`,
+    ].filter(Boolean).join(' | ');
+
+    window.parent.postMessage({ name: 'bijtelling-verstuurd', data }, '*');
+    showToast('✓ Verstuurd naar je Buddy!');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  updateMaxLabel();
 </script>
 </body>
 </html>
