@@ -552,20 +552,14 @@
   function verzenden() {
     if (!resultVal) { showToast('⚠️ Vul eerst een bedrag in'); return; }
 
-    const bijtellingEl = document.getElementById('bijtelling');
-    const belastingEl  = document.getElementById('belasting');
-    const invoer = modus === 'netto'
-      ? parseFloat(document.getElementById('input-netto').value)
-      : parseFloat(document.getElementById('input-fiscaal').value);
+    // De netto bijtelling per maand is:
+    //  - in 'fiscaal'-modus: de berekende uitkomst (resultVal)
+    //  - in 'netto'-modus: het ingevoerde bedrag zelf
+    const nettoBijtelling = modus === 'fiscaal'
+      ? resultVal
+      : parseFloat(document.getElementById('input-netto').value);
 
-    const data = [
-      modus === 'netto' ? `Netto budget: €${invoer}` : `Fiscale waarde: €${invoer.toLocaleString('nl-NL')}`,
-      `Brandstof: ${bijtellingEl.options[bijtellingEl.selectedIndex].text}`,
-      `Belastingschaal: ${belastingEl.options[belastingEl.selectedIndex].text}`,
-      modus === 'netto'
-        ? `Max. fiscale waarde: €${formatNL(resultVal, 0)}`
-        : `Netto bijtelling: €${formatNL(resultVal)}`,
-    ].join(' | ');
+    const data = `€${formatNL(nettoBijtelling)}`;
 
     window.parent.postMessage({ name: 'bijtelling-verstuurd', data }, '*');
     showToast('✓ Verstuurd naar je Buddy!');
